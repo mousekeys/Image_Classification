@@ -1,7 +1,7 @@
 
-# ResNet-18 for Image Classification
+# Image Classification
 
-This repository contains the implementation of a ResNet-18-based model for image classification, specifically designed to handle a dataset with 25 classes. The model has been modified to accommodate input images of size 416x416.
+This repository contains the implementation of a image classification model for 25 different images , specifically designed to handle a dataset with 25 classes. The model has been modified to accommodate input images of size 416x416.
 
 ## Table of Contents
 
@@ -15,7 +15,6 @@ This repository contains the implementation of a ResNet-18-based model for image
 
 ## Model Architecture
 
-The model is based on the ResNet-18 architecture with modifications for the specific use case:
 
 - **Input:** Images of size 416x416.
 - **Output:** 25 classes for classification.
@@ -25,7 +24,7 @@ The model is based on the ResNet-18 architecture with modifications for the spec
 
 - **Conv2d:** Initial convolution layer with 9,408 parameters.
 - **BatchNorm2d:** Batch normalization applied after each convolution.
-- **BasicBlock:** The core building block of ResNet, containing two convolutional layers followed by batch normalization and a residual connection.
+- **BasicBlock:** The core building block of the model, contains two convolutional layers followed by batch normalization and a residual connection.
 
 ## Model Architecture
 
@@ -286,16 +285,14 @@ After training, evaluate the model's performance on the validation set:
 Save the trained model for later use:
 
 
-    torch.save(model, 'resnet18_image_classify.pth')
+    torch.save(model, 'image_classify.pth')
 
 
 ## Usage
 
 To use the trained model for inference:
 
-
-    model = resnet18(num_classes=25)
-    model.load_state_dict(torch.load('resnet18_image_classify.pth'))
+    model.load_state_dict(torch.load('image_classify.pth'))
     model.eval()
 
 # Predict
