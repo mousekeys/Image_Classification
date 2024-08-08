@@ -306,7 +306,7 @@ To use the trained model for inference:
 
 Visualize the training and validation accuracy:
 
-    plt.subplot(1, 2, 2)
+    
     plt.plot(range(epochs), train_acc_history, label='Train Accuracy')
     plt.plot(range(epochs), val_acc_history, label='Validation Accuracy')
     plt.xlabel('Epochs')
@@ -321,7 +321,7 @@ Visualize the training and validation accuracy:
 
 Similarly, plot the training and validation loss:
 
-    plt.subplot(1, 2, 1)
+    
     plt.plot(range(epochs), train_loss_history, label='Train Loss')
     plt.plot(range(epochs), val_loss_history, label='Validation Loss')
     plt.xlabel('Epochs')
