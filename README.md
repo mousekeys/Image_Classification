@@ -26,8 +26,6 @@ The model is based on the ResNet-18 architecture with modifications for the spec
 - **Conv2d:** Initial convolution layer with 9,408 parameters.
 - **BatchNorm2d:** Batch normalization applied after each convolution.
 - **BasicBlock:** The core building block of ResNet, containing two convolutional layers followed by batch normalization and a residual connection.
-- **Sequential Layers:** The model has multiple sequential layers containing BasicBlocks with increasing filter sizes (64, 128, 256, 512).
-
 
 ## Model Architecture
 
