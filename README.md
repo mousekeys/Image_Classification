@@ -314,7 +314,6 @@ Visualize the training and validation accuracy:
     plt.title('Training and Validation Accuracy Graph')
     plt.legend()
 
-
 <img src="images\accuracyy.png" alt="Accuracy of model">
 
 ### 2. Plot Loss
@@ -332,3 +331,42 @@ Similarly, plot the training and validation loss:
 <img src="images\losss.png" alt="Loss of model">
 
 
+### 3. Confusion Matrix, ROC and Classification Report
+
+Similarly, plot the training and validation loss:
+
+    predictions, test_labels, probabilities = prediction(test_loader, model, device)
+
+    class_names = test_dataset.classes  
+    report = classification_report(test_labels, predictions, target_names=class_names)
+    print(report)
+
+    cm_matrix = confusion_matrix(test_labels, predictions) 
+    cm_display = ConfusionMatrixDisplay(confusion_matrix=cm_matrix, display_labels=class_names)
+
+    n_classes = len(class_names)
+    test_labels_one_hot = label_binarize(test_labels, classes=range(n_classes))
+
+    roc_auc = roc_auc_score(test_labels_one_hot, probabilities, average='macro', multi_class='ovr')
+    print(f"Macro-averaged ROC-AUC: {roc_auc:.2f}")
+
+    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(30, 10))  # Increase the figure size
+
+    cm_display.plot(ax=ax1)
+    ax1.set_title("Confusion Matrix")
+    ax1.set_xticklabels(class_names, rotation=90)
+
+    for i in range(n_classes):
+        RocCurveDisplay.from_predictions(test_labels_one_hot[:, i], probabilities[:, i], ax=ax2, name=class_names[i])
+    ax2.set_title("ROC Curves")
+
+    ax3.axis('off')  
+    classification_report_str = classification_report(test_labels, predictions, target_names=class_names)
+    ax3.text(0.5, 0.5, classification_report_str, horizontalalignment='center', verticalalignment='center', fontsize=12, family='monospace')
+
+    plt.tight_layout()
+    plt.show()
+
+    
+
+<img src="images\ROC.png" alt="confusion_matrix_roc_and_classification_report">
