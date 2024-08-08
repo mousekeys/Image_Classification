@@ -315,7 +315,7 @@ Visualize the training and validation accuracy:
     plt.legend()
 
 
-<img src="images\accuracy.png" alt="Accuracy of model">
+<img src="images\accuracyy.png" alt="Accuracy of model">
 
 ### 2. Plot Loss
 
@@ -329,6 +329,6 @@ Similarly, plot the training and validation loss:
     plt.title('Training and Validation Loss Graph')
     plt.legend()
 
-<img src="images\loss.png" alt="Loss of model">
+<img src="images\losss.png" alt="Loss of model">
 
 
