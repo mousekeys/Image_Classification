@@ -17,8 +17,8 @@ This repository contains the implementation of a ResNet-18-based model for image
 
 The model is based on the ResNet-18 architecture with modifications for the specific use case:
 
-- **Input:** Images of size 150x150.
-- **Output:** 6 classes for classification.
+- **Input:** Images of size 416x416.
+- **Output:** 25 classes for classification.
 - **Total Parameters:** 11,189,337.
 
 ### Key Components
@@ -31,94 +31,6 @@ The model is based on the ResNet-18 architecture with modifications for the spec
 
 ## Model Architecture
 
-### Input Layer
-- **Input**: Image (3 x 224 x 224)
-
-### Sequential Block 1
-- **Conv2d**: (3, 64, 7, stride=2, padding=3)  
-  Params: 9,408
-- **BatchNorm2d**: (64)  
-  Params: 128
-- **ReLU**
-- **MaxPool2d**: (kernel_size=3, stride=2, padding=1)
-
-### Sequential Block 2 (BasicBlock x2)
-- **BasicBlock 1:**
-  - **Conv2d**: (64, 64, 3, stride=1, padding=1)  
-    Params: 36,864
-  - **BatchNorm2d**: (64)  
-    Params: 128
-  - **ReLU**
-  - **Conv2d**: (64, 64, 3, stride=1, padding=1)  
-    Params: 36,864
-  - **BatchNorm2d**: (64)  
-    Params: 128
-  - **ReLU**
-- **BasicBlock 2:** (Repeat the structure of BasicBlock 1)  
-  Total Params for Block 2: 74,048
-
-### Sequential Block 3 (BasicBlock x2)
-- **BasicBlock 3:**
-  - **Conv2d**: (64, 128, 3, stride=2, padding=1)  
-    Params: 73,728
-  - **BatchNorm2d**: (128)  
-    Params: 256
-  - **ReLU**
-  - **Conv2d**: (128, 128, 3, stride=1, padding=1)  
-    Params: 147,456
-  - **BatchNorm2d**: (128)  
-    Params: 256
-  - **ReLU**
-  - **Downsample**: Conv2d (64, 128, 1, stride=2)  
-    Params: 8,448
-- **BasicBlock 4:** (Repeat the structure of BasicBlock 3 without Downsample)  
-  Total Params for Block 3: 230,144
-
-### Sequential Block 4 (BasicBlock x2)
-- **BasicBlock 5:**
-  - **Conv2d**: (128, 256, 3, stride=2, padding=1)  
-    Params: 294,912
-  - **BatchNorm2d**: (256)  
-    Params: 512
-  - **ReLU**
-  - **Conv2d**: (256, 256, 3, stride=1, padding=1)  
-    Params: 589,824
-  - **BatchNorm2d**: (256)  
-    Params: 512
-  - **ReLU**
-  - **Downsample**: Conv2d (128, 256, 1, stride=2)  
-    Params: 33,280
-- **BasicBlock 6:** (Repeat the structure of BasicBlock 5 without Downsample)  
-  Total Params for Block 4: 919,040
-
-### Sequential Block 5 (BasicBlock x2)
-- **BasicBlock 7:**
-  - **Conv2d**: (256, 512, 3, stride=2, padding=1)  
-    Params: 1,179,648
-  - **BatchNorm2d**: (512)  
-    Params: 1,024
-  - **ReLU**
-  - **Conv2d**: (512, 512, 3, stride=1, padding=1)  
-    Params: 2,359,296
-  - **BatchNorm2d**: (512)  
-    Params: 1,024
-  - **ReLU**
-  - **Downsample**: Conv2d (256, 512, 1, stride=2)  
-    Params: 132,096
-- **BasicBlock 8:** (Repeat the structure of BasicBlock 7 without Downsample)  
-  Total Params for Block 5: 3,671,936
-
-### Classifier
-- **Average Pooling**: (Global)
-- **Linear**: (512, 1000)  
-  Params: 513,000
-
-### Total Parameters
-- **Total Params**: 11,689,512
-- **Trainable Params**: 11,689,512
-- **Non-trainable Params**: 0
-
-## Model Structure
 
     =================================================================
     Layer (type:depth-idx)                   Param #
@@ -183,8 +95,6 @@ The model is based on the ResNet-18 architecture with modifications for the spec
     Trainable params: 11,189,337
     Non-trainable params: 0
     =================================================================
-
-
 
 
 ## Dataset Preparation
