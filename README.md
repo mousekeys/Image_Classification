@@ -1,2 +1,426 @@
-# Image_Classification
-A Image classification model based on ResNet-18 architecture.
+
+# ResNet-18 for Image Classification
+
+This repository contains the implementation of a ResNet-18-based model for image classification, specifically designed to handle a dataset with 6 classes. The model has been modified to accommodate input images of size 150x150.
+
+## Table of Contents
+
+1. [Model Architecture](#model-architecture)
+2. [Dataset Preparation](#dataset-preparation)
+3. [Training](#training)
+4. [Evaluation](#evaluation)
+5. [Saving the Model](#saving-the-model)
+6. [Plotting Metrics](#plotting-metrics)
+7. [Usage](#usage)
+
+## Model Architecture
+
+The model is based on the ResNet-18 architecture with modifications for the specific use case:
+
+- **Input:** Images of size 150x150.
+- **Output:** 6 classes for classification.
+- **Total Parameters:** 11,189,337.
+
+### Key Components
+
+- **Conv2d:** Initial convolution layer with 9,408 parameters.
+- **BatchNorm2d:** Batch normalization applied after each convolution.
+- **BasicBlock:** The core building block of ResNet, containing two convolutional layers followed by batch normalization and a residual connection.
+- **Sequential Layers:** The model has multiple sequential layers containing BasicBlocks with increasing filter sizes (64, 128, 256, 512).
+
+
+## Model Architecture
+
+### Input Layer
+- **Input**: Image (3 x 224 x 224)
+
+### Sequential Block 1
+- **Conv2d**: (3, 64, 7, stride=2, padding=3)  
+  Params: 9,408
+- **BatchNorm2d**: (64)  
+  Params: 128
+- **ReLU**
+- **MaxPool2d**: (kernel_size=3, stride=2, padding=1)
+
+### Sequential Block 2 (BasicBlock x2)
+- **BasicBlock 1:**
+  - **Conv2d**: (64, 64, 3, stride=1, padding=1)  
+    Params: 36,864
+  - **BatchNorm2d**: (64)  
+    Params: 128
+  - **ReLU**
+  - **Conv2d**: (64, 64, 3, stride=1, padding=1)  
+    Params: 36,864
+  - **BatchNorm2d**: (64)  
+    Params: 128
+  - **ReLU**
+- **BasicBlock 2:** (Repeat the structure of BasicBlock 1)  
+  Total Params for Block 2: 74,048
+
+### Sequential Block 3 (BasicBlock x2)
+- **BasicBlock 3:**
+  - **Conv2d**: (64, 128, 3, stride=2, padding=1)  
+    Params: 73,728
+  - **BatchNorm2d**: (128)  
+    Params: 256
+  - **ReLU**
+  - **Conv2d**: (128, 128, 3, stride=1, padding=1)  
+    Params: 147,456
+  - **BatchNorm2d**: (128)  
+    Params: 256
+  - **ReLU**
+  - **Downsample**: Conv2d (64, 128, 1, stride=2)  
+    Params: 8,448
+- **BasicBlock 4:** (Repeat the structure of BasicBlock 3 without Downsample)  
+  Total Params for Block 3: 230,144
+
+### Sequential Block 4 (BasicBlock x2)
+- **BasicBlock 5:**
+  - **Conv2d**: (128, 256, 3, stride=2, padding=1)  
+    Params: 294,912
+  - **BatchNorm2d**: (256)  
+    Params: 512
+  - **ReLU**
+  - **Conv2d**: (256, 256, 3, stride=1, padding=1)  
+    Params: 589,824
+  - **BatchNorm2d**: (256)  
+    Params: 512
+  - **ReLU**
+  - **Downsample**: Conv2d (128, 256, 1, stride=2)  
+    Params: 33,280
+- **BasicBlock 6:** (Repeat the structure of BasicBlock 5 without Downsample)  
+  Total Params for Block 4: 919,040
+
+### Sequential Block 5 (BasicBlock x2)
+- **BasicBlock 7:**
+  - **Conv2d**: (256, 512, 3, stride=2, padding=1)  
+    Params: 1,179,648
+  - **BatchNorm2d**: (512)  
+    Params: 1,024
+  - **ReLU**
+  - **Conv2d**: (512, 512, 3, stride=1, padding=1)  
+    Params: 2,359,296
+  - **BatchNorm2d**: (512)  
+    Params: 1,024
+  - **ReLU**
+  - **Downsample**: Conv2d (256, 512, 1, stride=2)  
+    Params: 132,096
+- **BasicBlock 8:** (Repeat the structure of BasicBlock 7 without Downsample)  
+  Total Params for Block 5: 3,671,936
+
+### Classifier
+- **Average Pooling**: (Global)
+- **Linear**: (512, 1000)  
+  Params: 513,000
+
+### Total Parameters
+- **Total Params**: 11,689,512
+- **Trainable Params**: 11,689,512
+- **Non-trainable Params**: 0
+
+## Model Structure
+
+    =================================================================
+    Layer (type:depth-idx)                   Param #
+    =================================================================
+    ├─Conv2d: 1-1                            9,408
+    ├─BatchNorm2d: 1-2                       128
+    ├─Sequential: 1-3                        --
+    |    └─BasicBlock: 2-1                   --
+    |    |    └─Conv2d: 3-1                  36,864
+    |    |    └─BatchNorm2d: 3-2             128
+    |    |    └─Conv2d: 3-3                  36,864
+    |    |    └─BatchNorm2d: 3-4             128
+    |    |    └─Sequential: 3-5              --
+    |    └─BasicBlock: 2-2                   --
+    |    |    └─Conv2d: 3-6                  36,864
+    |    |    └─BatchNorm2d: 3-7             128
+    |    |    └─Conv2d: 3-8                  36,864
+    |    |    └─BatchNorm2d: 3-9             128
+    |    |    └─Sequential: 3-10             --
+    ├─Sequential: 1-4                        --
+    |    └─BasicBlock: 2-3                   --
+    |    |    └─Conv2d: 3-11                 73,728
+    |    |    └─BatchNorm2d: 3-12            256
+    |    |    └─Conv2d: 3-13                 147,456
+    |    |    └─BatchNorm2d: 3-14            256
+    |    |    └─Sequential: 3-15             8,448
+    |    └─BasicBlock: 2-4                   --
+    |    |    └─Conv2d: 3-16                 147,456
+    |    |    └─BatchNorm2d: 3-17            256
+    |    |    └─Conv2d: 3-18                 147,456
+    |    |    └─BatchNorm2d: 3-19            256
+    |    |    └─Sequential: 3-20             --
+    ├─Sequential: 1-5                        --
+    |    └─BasicBlock: 2-5                   --
+    |    |    └─Conv2d: 3-21                 294,912
+    |    |    └─BatchNorm2d: 3-22            512
+    |    |    └─Conv2d: 3-23                 589,824
+    |    |    └─BatchNorm2d: 3-24            512
+    |    |    └─Sequential: 3-25             33,280
+    |    └─BasicBlock: 2-6                   --
+    |    |    └─Conv2d: 3-26                 589,824
+    |    |    └─BatchNorm2d: 3-27            512
+    |    |    └─Conv2d: 3-28                 589,824
+    |    |    └─BatchNorm2d: 3-29            512
+    |    |    └─Sequential: 3-30             --
+    ├─Sequential: 1-6                        --
+    |    └─BasicBlock: 2-7                   --
+    |    |    └─Conv2d: 3-31                 1,179,648
+    |    |    └─BatchNorm2d: 3-32            1,024
+    |    |    └─Conv2d: 3-33                 2,359,296
+    |    |    └─BatchNorm2d: 3-34            1,024
+    |    |    └─Sequential: 3-35             132,096
+    |    └─BasicBlock: 2-8                   --
+    |    |    └─Conv2d: 3-36                 2,359,296
+    |    |    └─BatchNorm2d: 3-37            1,024
+    |    |    └─Conv2d: 3-38                 2,359,296
+    |    |    └─BatchNorm2d: 3-39            1,024
+    |    |    └─Sequential: 3-40             --
+    ├─Linear: 1-7                            12,825
+    =================================================================
+    Total params: 11,189,337
+    Trainable params: 11,189,337
+    Non-trainable params: 0
+    =================================================================
+
+
+
+
+## Dataset Preparation
+
+### 1. Dataset Structure
+
+Organize your dataset as follows:
+
+    Dataset/
+    ├── train/
+    │   ├── class1/
+    │   │   ├── image1.jpg
+    │   │   ├── image2.jpg
+    │   │   └── ...
+    │   ├── class2/
+    │   └── ...
+    └── val/
+        ├── class1/
+        ├── class2/
+        └── ...
+
+### 2. Loading the Dataset
+
+Use the following code to load and transform your dataset:
+
+
+    data_transforms = {
+        'train': transforms.Compose([
+            transforms.RandomResizedCrop(224),
+            transforms.RandomRotation(30),
+            transforms.RandomHorizontalFlip(),
+            transforms.RandomVerticalFlip(),
+            transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.2),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.4731, 0.4819, 0.4018], std=[0.1925, 0.1915, 0.1963])
+        ]),
+        'val': transforms.Compose([
+            transforms.Resize(256),
+            transforms.CenterCrop(224),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.4706, 0.4802, 0.4020], std=[0.1907, 0.1898, 0.1950])
+        ]),
+    }
+    data_transforms = {
+        'train': transforms.Compose([
+            transforms.RandomResizedCrop(224),
+            transforms.RandomRotation(30),
+            transforms.RandomHorizontalFlip(),
+            transforms.RandomVerticalFlip(),
+            transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.2),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.4731, 0.4819, 0.4018], std=[0.1925, 0.1915, 0.1963])
+        ]),
+        'val': transforms.Compose([
+            transforms.Resize(256),
+            transforms.CenterCrop(224),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.4706, 0.4802, 0.4020], std=[0.1907, 0.1898, 0.1950])
+        ]),
+    }
+
+
+## Training
+
+Use the provided script to train the model:
+
+
+    criterion = nn.CrossEntropyLoss()
+    optimizer = optim.AdamW(model.parameters(), lr=initial_lr, weight_decay=weight_decay)
+    scheduler = optim.lr_scheduler.OneCycleLR(optimizer, max_lr=initial_lr,steps_per_epoch=len(data_loaders['train']), epochs=num_epochs)
+
+    for epoch in range(epochs):
+        model.train()
+        for images, labels in train_loader:
+            outputs = model(images)
+            loss = criterion(outputs, labels)
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+            
+    best_acc = 0.0
+    early_stop_counter = 0
+    best_model_wts = None
+    for epoch in range(num_epochs):
+        print(f'Epoch {epoch}/{num_epochs - 1}')
+
+        for phase in ['train', 'val']:
+            if phase == 'train':
+                model.train()
+            else:
+                model.eval()
+
+            running_loss = 0.0
+            running_corrects = 0
+
+            for inputs, labels in tqdm(data_loaders[phase], desc=f"{phase} - Epoch {epoch+1}"):
+                inputs = inputs.to(device, non_blocking=True) #Cuda or CPU
+                labels = labels.to(device, non_blocking=True)
+
+                optimizer.zero_grad()
+
+                with torch.set_grad_enabled(phase == 'train'):
+                    outputs = model(inputs)
+                    _, preds = torch.max(outputs, 1)
+                    loss = criterion(outputs, labels)
+
+                    if phase == 'train':
+                        loss.backward()
+                        optimizer.step()
+
+                running_loss += loss.item() * inputs.size(0)
+                running_corrects += torch.sum(preds == labels.data)
+
+            if phase == 'train':
+                scheduler.step()
+                epoch_train_loss = running_loss / dataset_sizes['train']
+                epoch_train_corrects = running_corrects.double() / dataset_sizes['train']
+            else:
+                epoch_val_loss = running_loss / dataset_sizes['val']
+                epoch_val_corrects = running_corrects.double() / dataset_sizes['val']
+
+        train_loss_history.append(epoch_train_loss)
+        train_acc_history.append(epoch_train_corrects.item())
+        val_loss_history.append(epoch_val_loss)
+        val_acc_history.append(epoch_val_corrects.item())
+
+        print(f'Train Loss: {epoch_train_loss:.4f} Accuracy: {epoch_train_corrects:.4f}')
+        print(f'Validation Loss: {epoch_val_loss:.4f} Accuracy: {epoch_val_corrects:.4f}')
+
+        if epoch_val_corrects > best_acc:
+            best_acc = epoch_val_corrects
+            best_model_wts = model.state_dict().copy()
+            early_stop_counter = 0
+        else:
+            early_stop_counter += 1
+
+        if early_stop_counter >= patience:
+            print("Early stopping done")
+            model.load_state_dict(best_model_wts)
+            break
+## Evaluation
+
+After training, evaluate the model's performance on the validation set:
+
+
+    best_acc = 0.0
+    early_stop_counter = 0
+    best_model_wts = None
+    for epoch in range(num_epochs):
+        print(f'Epoch {epoch}/{num_epochs - 1}')
+
+        for phase in ['train', 'val']:
+
+                model.eval()
+
+            running_loss = 0.0
+            running_corrects = 0
+
+            for inputs, labels in tqdm(data_loaders[phase], desc=f"{phase} - Epoch {epoch+1}"):
+                inputs = inputs.to(device, non_blocking=True) #Cuda or CPU
+                labels = labels.to(device, non_blocking=True)
+
+                optimizer.zero_grad()
+
+                with torch.set_grad_enabled(phase == 'train'):
+                    outputs = model(inputs)
+                    _, preds = torch.max(outputs, 1)
+                    loss = criterion(outputs, labels)
+
+                running_loss += loss.item() * inputs.size(0)
+                running_corrects += torch.sum(preds == labels.data)
+
+                epoch_val_loss = running_loss / dataset_sizes['val']
+                epoch_val_corrects = running_corrects.double() / dataset_sizes['val']
+
+        train_loss_history.append(epoch_train_loss)
+        train_acc_history.append(epoch_train_corrects.item())
+        val_loss_history.append(epoch_val_loss)
+        val_acc_history.append(epoch_val_corrects.item())
+
+        print(f'Train Loss: {epoch_train_loss:.4f} Accuracy: {epoch_train_corrects:.4f}')
+        print(f'Validation Loss: {epoch_val_loss:.4f} Accuracy: {epoch_val_corrects:.4f}')
+    print('Best Validation Accuracy: {:4f}'.format(best_acc))
+
+
+
+## Saving the Model
+
+### 1. Save the Model State
+
+Save the trained model for later use:
+
+
+    torch.save(model, 'resnet18_image_classify.pth')
+
+
+## Usage
+
+To use the trained model for inference:
+
+
+    model = resnet18(num_classes=25)
+    model.load_state_dict(torch.load('resnet18_image_classify.pth'))
+    model.eval()
+
+# Predict
+    output = model(image)
+    _, predicted_class = torch.max(output, 1)
+    print(f'Predicted Class: {predicted_class.item()}')
+
+## Plotting Metrics
+
+### 1. Plot Accuracy
+
+Visualize the training and validation accuracy:
+
+    plt.subplot(1, 2, 2)
+    plt.plot(range(epochs), train_acc_history, label='Train Accuracy')
+    plt.plot(range(epochs), val_acc_history, label='Validation Accuracy')
+    plt.xlabel('Epochs')
+    plt.ylabel('Accuracy')
+    plt.title('Training and Validation Accuracy Graph')
+    plt.legend()
+
+### 2. Plot Loss
+
+Similarly, plot the training and validation loss:
+
+    plt.subplot(1, 2, 1)
+    plt.plot(range(epochs), train_loss_history, label='Train Loss')
+    plt.plot(range(epochs), val_loss_history, label='Validation Loss')
+    plt.xlabel('Epochs')
+    plt.ylabel('Losses')
+    plt.title('Training and Validation Loss Graph')
+    plt.legend()
+
+
+
+
