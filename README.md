@@ -1,7 +1,7 @@
 
 # ResNet-18 for Image Classification
 
-This repository contains the implementation of a ResNet-18-based model for image classification, specifically designed to handle a dataset with 6 classes. The model has been modified to accommodate input images of size 150x150.
+This repository contains the implementation of a ResNet-18-based model for image classification, specifically designed to handle a dataset with 25 classes. The model has been modified to accommodate input images of size 416x416.
 
 ## Table of Contents
 
